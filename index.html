@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Email Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h2>Spam Email Detection System</h2>
+    <form id="message-form">
+        <label for="message">Enter your message:</label>
+        <input type="text" id="message" name="message" required>
+        <button type="button" onclick="checkSpam()">Check</button>
+    </form>
+    <h3>Prediction: <span id="result">undefined</span></h3>
+
+    <script>
+        async function checkSpam() {
+            const message = document.getElementById('message').value;
+
+            if (!message) {
+                alert('Please enter a message!');
+                return;
+            }
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+                document.getElementById('result').innerText = data.prediction;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = 'Error occurred';
+            }
+        }
+    </script>
+</body>
+</html>
